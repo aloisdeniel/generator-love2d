@@ -4,15 +4,15 @@ var request = require('request');
 var async = require('async');
 
 var luaModules = {
-  "kikito/middleclass" : "https://api.github.com/repos/kikito/middleclass/contents/middleclass.lua",
-  "kikito/bump" : "https://api.github.com/repos/kikito/bump.lua/contents/bump.lua",
-  "kikito/gamera" : "https://api.github.com/repos/kikito/gamera/contents/gamera.lua",
-  "kikito/inspect" : "https://api.github.com/repos/kikito/inspect.lua/contents/inspect.lua",
-  "kikito/i18n" : "https://api.github.com/repos/kikito/i18n.lua/contents/i18n.lua"
+  "kikito/middleclass" : "https://raw.githubusercontent.com/kikito/middleclass/master/middleclass.lua",
+  "kikito/bump" : "https://raw.githubusercontent.com/kikito/bump.lua/master/bump.lua",
+  "kikito/gamera" : "https://raw.githubusercontent.com/kikito/gamera/master/gamera.lua",
+  "kikito/inspect" : "https://raw.githubusercontent.com/kikito/inspect.lua/master/inspect.lua",
+  "kikito/anim8" : "https://raw.githubusercontent.com/kikito/anim8/master/anim8.lua"
 };
 
 function downloadGithubFile(options,callback) {
-  request({uri : options.uri, headers: { 'Accept': 'application/vnd.github.v3.raw', 'User-Agent' : 'node/request' }}, function (error, response, body) {
+  request({uri : options.uri, headers: { 'User-Agent' : 'node/request' }}, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       options.fs.write(options.destination, body)
       callback(null,options.destination);
@@ -37,7 +37,7 @@ module.exports = generators.Base.extend({
     this.prompt({
       type    : 'checkbox',
       name    : 'gameModules',
-      message : 'Which game module do you need (with a limit of 60/hour) ?',
+      message : 'Which game module do you need ?',
       choices: Object.keys(luaModules),
       default : Object.keys(luaModules),
       store   : true
@@ -54,15 +54,17 @@ module.exports = generators.Base.extend({
     var tmpl = [
       { in: 'src/main.lua'  },
       { in: 'archive.js'  },
+      { in: 'README.md'  },
     ];
 
-    tmpl.forEach(function(t){
+    for (var x in tmpl) {
+      var t = tmpl[x];
       this.fs.copyTpl(
         this.templatePath(t.in),
         this.destinationPath(t.out ? t.out : t.in),
-        t.args
+        t.args ? t.args : this.props
       );
-    })
+    }
 
     // 2. Downloading all requested game modules from github (warning: rate limit)
     var options = [];
