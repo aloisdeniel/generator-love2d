@@ -1,0 +1,23 @@
+{
+  "name": "generator-love2d",
+  "version": "0.0.1",
+  "description": "A yeoman generator for love2d game engine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "scaffold",
+    "love2d",
+    "game"
+  ],
+  "dependencies": {
+    "async": "^1.5.0",
+    "lodash": "^3.10.1",
+    "request": "^2.67.0",
+    "yeoman-generator": "^0.20.2"
+  },
+  "author": "Aloïs Deniel",
+  "license": "MIT"
+}
