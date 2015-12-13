@@ -62,7 +62,8 @@ module.exports = generators.Base.extend({
       name    : 'gameModules',
       message : 'Which game module do you need ?',
       choices: Object.keys(luaModules)
-    };
+
+    }];
 
     this.prompt(prompts, function (answers) {
       this.props.gameName = answers.gameName;
@@ -83,7 +84,7 @@ module.exports = generators.Base.extend({
       { in: 'src/conf.lua'  },
       { in: 'package.ps1'  },
       { in: '_.git', out: '.git'  },
-      { in: 'README.md'  },
+      { in: 'README.md'  }
     ];
 
     for (var x in tmpl) {
