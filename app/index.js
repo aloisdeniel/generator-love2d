@@ -1,6 +1,7 @@
 var generators = require('yeoman-generator');
 var _ = require('lodash');
 var request = require('request');
+var path = require('path');
 var async = require('async');
 
 var luaModules = {
@@ -34,14 +35,40 @@ module.exports = generators.Base.extend({
   prompting: function () {
     var done = this.async();
 
-    this.prompt({
+    var prompts = [{
+      name: 'gameName',
+      default: path.basename(process.cwd()),
+      message: 'Game name',
+      validate: function (str) {
+        return str.length > 0;
+      }
+    },{
+      name: 'description',
+      message: 'Description',
+    },{
+      name: 'homepage',
+      message: 'Project homepage url',
+    },{
+      name: 'authorName',
+      message: 'Author\'s name',
+      default: "Anonymous",
+      store: true
+    },{
+      name: 'authorEmail',
+      message: 'Author\'s email',
+      store: true
+    },{
       type    : 'checkbox',
       name    : 'gameModules',
       message : 'Which game module do you need ?',
-      choices: Object.keys(luaModules),
-      default : Object.keys(luaModules),
-      store   : true
-    }, function (answers) {
+      choices: Object.keys(luaModules)
+    };
+
+    this.prompt(prompts, function (answers) {
+      this.props.gameName = answers.gameName;
+      this.props.gamePackageName = _.kebabCase(answers.gameName);
+      this.props.description = answers.description;
+      this.props.author = { name: answers.authorName, email: answers.authorEmail };
       this.props.gameModules = answers.gameModules;
       done();
     }.bind(this));
@@ -53,7 +80,8 @@ module.exports = generators.Base.extend({
 
     var tmpl = [
       { in: 'src/main.lua'  },
-      { in: 'archive.js'  },
+      { in: 'src/conf.lua'  },
+      { in: '_.git', out: '.git'  },
       { in: 'README.md'  },
     ];
 
@@ -67,6 +95,7 @@ module.exports = generators.Base.extend({
     }
 
     // 2. Downloading all requested game modules from github (warning: rate limit)
+
     var options = [];
     for (var i = 0; i < this.props.gameModules.length; i++) {
       var uri = luaModules[this.props.gameModules[i]];
@@ -74,7 +103,7 @@ module.exports = generators.Base.extend({
       options.push({
         fs: this.fs,
         uri: uri,
-        destination: this.destinationPath("src/libs/"+filename)
+        destination: this.destinationPath("src/lib/"+filename)
       });
     }
 
