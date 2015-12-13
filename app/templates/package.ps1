@@ -1,6 +1,6 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-$gameName = "test";
+$gameName = "<%= gamePackageName %>";
 
 function Archive
 {
@@ -28,7 +28,7 @@ function Archive
 function DownloadDependency
 {
     param( [string]$name )
- 
+
     $toolsFolder = $PSScriptRoot+'\engines\';
     $destPath = $toolsFolder+$name+'.zip'
 
@@ -49,7 +49,7 @@ function DownloadDependency
 function PackageWindows
 {
     param( [string]$loveVersion, [string]$arch )
-    
+
     $bin = $PSScriptRoot+'\bin\win\' + $arch + '\'
 
     # Remove old binaries
@@ -61,7 +61,7 @@ function PackageWindows
     # Download LOVE framework
     $name = 'love-' + $loveVersion + '-'+$arch
     DownloadDependency $name
-    
+
     # Unzip LOVE framework to bin directory
     $zip = $PSScriptRoot+'\engines\'+$name+'.zip'
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zip,$bin)
@@ -79,7 +79,7 @@ function PackageWindows
 function PackageMacOs
 {
     param( [string]$loveVersion, [string]$arch )
-    
+
     $bin = $PSScriptRoot+'\bin\macosx\' + $arch + '\'
 
     # Remove old binaries
@@ -91,7 +91,7 @@ function PackageMacOs
     # Download LOVE framework
     $name = 'love-' + $loveVersion + '-macosx-'+$arch
     DownloadDependency $name
-    
+
     # Unzip LOVE framework to bin directory
     $zip = $PSScriptRoot+'\engines\'+$name+'.zip'
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zip,$bin)
@@ -100,16 +100,16 @@ function PackageMacOs
     $appName = $gameName + ".app"
     $appFolder = $bin + $appName + "\"
     Rename-Item ($bin + "love.app") $appName
-    
+
     # Copy love archive to resources
     $appResourcesFolder = $appFolder + "Resources"
     $archive = $PSScriptRoot+'\archives\'+$gameName+'.love'
     Copy-Item $archive $appResourcesFolder
-    
+
     # Updating Info.plist
     $appPlist = $appFolder + "Info.plist"
-    Get-Content $appPlist | ForEach-Object { $_ -replace "org.love2d.love", "com."+$gameName } | ForEach-Object { $_ -replace "LÖVE", $gameName } | Set-Content ($file+".tmp")
-    
+    Get-Content $appPlist | ForEach-Object { $_ -replace "org.love2d.love", "com."+$gameName } | ForEach-Object { $_ -replace "Lï¿½VE", $gameName } | Set-Content ($file+".tmp")
+
 }
 
 Archive

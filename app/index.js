@@ -81,6 +81,7 @@ module.exports = generators.Base.extend({
     var tmpl = [
       { in: 'src/main.lua'  },
       { in: 'src/conf.lua'  },
+      { in: 'package.ps1'  },
       { in: '_.git', out: '.git'  },
       { in: 'README.md'  },
     ];
